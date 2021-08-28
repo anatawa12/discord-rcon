@@ -59,3 +59,13 @@ jobs:
           # publish
           docker push "$container":latest
           docker push "$container:$version"
+          git push && git push --tags
+
+      - name: Update To Next Version
+        run: |
+          VERSION="$(get-version)"
+          VERSION="$(version-next "$VERSION")"
+          set-version "$(version-snapshot "$VERSION")"
+          git add .
+          git commit -m "prepare for next version: $VERSION"
+          git push
