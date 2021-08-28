@@ -59,6 +59,7 @@ jobs:
           # publish
           docker push "$container":latest
           docker push "$container:$version"
+          cargo publish --no-verify # it's verified on cargo package so no-verify
           git push && git push --tags
 
       - name: Update To Next Version
