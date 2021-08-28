@@ -30,6 +30,10 @@ Then run following command to start the bot.
 docker run ghcr.io/anatawa12/discord-rcon
 ```
 
+### via docker-compose
+
+You can configure docker-compose based on [docker-compose.yml].
+
 ### install via cargo
 
 Run ``cargo install discord-rcon`` to install discord-rcon.
@@ -77,3 +81,4 @@ pass = "<password>"
 ```
 
 [create config.toml]: #configuring-this-bot
+[docker-compose.yml]: docker-compose.yml

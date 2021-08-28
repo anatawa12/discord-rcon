@@ -1,0 +1,35 @@
+version: '3'
+services:
+  discord-rcon:
+    image: ghcr.io/anatawa12/discord-rcon
+    container_name: discord-rcon
+    restart: always
+    environment:
+      # the discord bot token
+      DISCORD_TOKEN: "<discord bot token>"
+
+      # the discord command prefix.
+      # if the value is "!", "!say hello" executes "say hello" in console
+      # If the value is empty, all messages posted to the channel by a person who has
+      # the role will be executed.
+      DISCORD_PREFIX: "<command prefix>"
+
+      # The id of role the users this bot can be used.
+      # if not specified, all users can use this bot. it's dangerous
+      #DISCORD_ROLE: <role id>
+
+      # The id of channel this bot will listen.
+      # if not specified, all channels on guild/server the bot connected will be watched.
+      #DISCORD_CHANNEL: <channel id>
+
+      # The kind of your game server.
+      # This enables the some quirks for game servers.
+      # currently supports Minecraft and Factorio.
+      # If your game is not one of games above, you don't need to specify server_kind
+      #SERVER_KIND: "<one of minecraft, factorio, or normal>"
+
+      # The section about rcon connection
+      # the address of rcon server.
+      RCON_ADDRESS: "<server ip>:<port>"
+      # the password of rcon server.
+      DISCORD_CHANNEL: "<password>"
