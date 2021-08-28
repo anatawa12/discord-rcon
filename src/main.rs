@@ -85,8 +85,13 @@ async fn main() {
     // Discord Bot Token を設定
     let options = read_options().await;
 
-    let connection = Connection::builder()
-        .enable_minecraft_quirks(true)
+    let mut builder = Connection::builder();
+    match options.server_kind {
+        ServerKind::Normal => {}
+        ServerKind::Minecraft => builder = builder.enable_minecraft_quirks(true),
+        ServerKind::Factorio => builder = builder.enable_factorio_quirks(true),
+    }
+    let connection = builder
         .connect(options.rcon.address, &options.rcon.pass)
         .await
         .expect("failed to connect");
@@ -123,6 +128,8 @@ struct Options {
     prefix: String,
     role: Option<u64>,
     channel: Option<u64>,
+    #[serde(default)]
+    server_kind: ServerKind,
     rcon: RconOptions,
 }
 
@@ -131,4 +138,20 @@ struct RconOptions {
     address: String,
     #[serde(default)]
     pass: String,
+}
+
+#[derive(Deserialize)]
+enum ServerKind {
+    #[serde(rename = "normal")]
+    Normal,
+    #[serde(rename = "minecraft")]
+    Minecraft,
+    #[serde(rename = "factorio")]
+    Factorio,
+}
+
+impl Default for ServerKind {
+    fn default() -> Self {
+        ServerKind::Normal
+    }
 }
