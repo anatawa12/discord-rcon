@@ -10,6 +10,10 @@ authors = ["anatawa12 <anatawa12@icloud.com>"]
 
 categories = ["games"]
 keywords = ["rcon", "discord", "bot", "rcon", "minecraft"]
+include = [
+    "src/**",
+    "Cargo*",
+]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

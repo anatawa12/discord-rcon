@@ -1,0 +1,61 @@
+name: Publish
+
+on:
+  workflow_dispatch: {}
+
+env:
+  RELEASER_CHANGER: 'regex-pattern:version = "$1"@test.txt'
+
+jobs:
+  build:
+    name: Build
+    environment: deployment
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: anatawa12/something-releaser@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+      - uses: Swatinem/rust-cache@v1
+        with:
+          target-dir: target
+
+      - name: update version name
+        run: |-
+          set-git-user anatawa12-bot
+
+          # update version name
+          VERSION="$(get-version)"
+          if ! [[ "$VERSION" = *-SNAPSHOT ]]; then
+            echo 'VERSION IS NOT SNAPSHOT' >&2
+            exit 1
+          fi
+          VERSION="$(version-unsnapshot "$VERSION")"
+          set-version "$VERSION"
+          cargo metadata --format-version=1 > /dev/null
+          generate-changelog -v "$VERSION" --date-for-unreleased
+
+          # commit & tag
+          git add .
+          git commit -m "v$VERSION"
+          git tag "v$VERSION"
+
+      - name: Build and publish
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |-
+          # login
+          echo $GITHUB_TOKEN | docker login ghcr.io -u anatawa12 --password-stdin
+          # data
+          container=ghcr.io/anatawa12/discord-rcon
+          version="$(get-version)"
+          # build
+          docker build -t "$container":latest -t "$container:$version" .
+          cargo package
+          # publish
+          docker push "$container":latest
+          docker push "$container:$version"
