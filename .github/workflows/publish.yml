@@ -4,7 +4,7 @@ on:
   workflow_dispatch: {}
 
 env:
-  RELEASER_CHANGER: 'regex-pattern:version = "$1"@test.txt'
+  RELEASER_CHANGER: 'regex-pattern:version = "$1"@Cargo.toml'
 
 jobs:
   build:
