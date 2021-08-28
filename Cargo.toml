@@ -4,6 +4,12 @@ version = "0.1.0"
 edition = "2018"
 license = "Apache-2.0 OR MIT"
 readme = "README.md"
+description = "The discord bot to control game servers via rcon."
+repository = "https://github.com/anatawa12/discord-rcon"
+authors = ["anatawa12 <anatawa12@icloud.com>"]
+
+categories = ["games"]
+keywords = ["rcon", "discord", "bot", "rcon", "minecraft"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
