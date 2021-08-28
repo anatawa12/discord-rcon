@@ -67,6 +67,7 @@ jobs:
           VERSION="$(get-version)"
           VERSION="$(version-next "$VERSION")"
           set-version "$(version-snapshot "$VERSION")"
+          cargo metadata --format-version=1 > /dev/null
           git add .
           git commit -m "prepare for next version: $VERSION"
           git push
