@@ -32,4 +32,4 @@ services:
       # the address of rcon server.
       RCON_ADDRESS: "<server ip>:<port>"
       # the password of rcon server.
-      DISCORD_CHANNEL: "<password>"
+      RCON_PASSWORD: "<password>"

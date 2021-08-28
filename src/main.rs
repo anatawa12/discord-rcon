@@ -141,7 +141,7 @@ fn read_options_from_env() -> Option<Options> {
             .unwrap_or_else(Default::default),
         rcon: RconOptions {
             address: env::var("RCON_ADDRESS").ok()?,
-            pass: env::var("DISCORD_CHANNEL").ok().unwrap_or_else(Default::default),
+            pass: env::var("RCON_PASSWORD").ok().unwrap_or_else(Default::default),
         }
     })
 }
