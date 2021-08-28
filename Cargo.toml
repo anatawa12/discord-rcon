@@ -1,6 +1,6 @@
 [package]
 name = "discord-rcon"
-version = "0.1.0-SNAPSHOT"
+version = "0.1.0"
 edition = "2018"
 license = "Apache-2.0 OR MIT"
 readme = "README.md"
