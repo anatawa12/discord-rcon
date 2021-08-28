@@ -5,6 +5,7 @@ use serenity::model::prelude::*;
 use serenity::prelude::*;
 use std::fmt::Debug;
 use tokio::sync::Mutex;
+use std::str::FromStr;
 
 struct Handler {
     prefix: String,
@@ -116,10 +117,33 @@ async fn main() {
 }
 
 async fn read_options() -> Options {
+    if let Some(options) = read_options_from_env() {
+        return options
+    }
     let config = tokio::fs::read_to_string("config.toml")
         .await
         .expect("failed to read config.toml");
     toml::from_str(&config).expect("failed to read config.toml")
+}
+
+fn read_options_from_env() -> Option<Options> {
+    use std::env;
+
+    Some(Options {
+        token: env::var("DISCORD_TOKEN").ok()?,
+        prefix: env::var("DISCORD_PREFIX").ok()?,
+        role: env::var("DISCORD_ROLE").ok()
+            .map(|x| x.parse::<u64>().expect("parsing DISCORD_ROLE")),
+        channel: env::var("DISCORD_CHANNEL").ok()
+            .map(|x| x.parse::<u64>().expect("parsing DISCORD_CHANNEL")),
+        server_kind: env::var("SERVER_KIND").ok()
+            .map(|x| x.parse::<ServerKind>().expect("parsing SERVER_KIND"))
+            .unwrap_or_else(Default::default),
+        rcon: RconOptions {
+            address: env::var("RCON_ADDRESS").ok()?,
+            pass: env::var("DISCORD_CHANNEL").ok().unwrap_or_else(Default::default),
+        }
+    })
 }
 
 #[derive(Deserialize)]
@@ -153,5 +177,29 @@ enum ServerKind {
 impl Default for ServerKind {
     fn default() -> Self {
         ServerKind::Normal
+    }
+}
+
+#[derive(Debug)]
+struct ParseServerKindErr(());
+
+impl std::fmt::Display for ParseServerKindErr {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "value is invalid. oneof `normal`, `minecraft`, or `factorio` is required.")
+    }
+}
+
+impl std::error::Error for ParseServerKindErr {}
+
+impl FromStr for ServerKind {
+    type Err = ParseServerKindErr;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "normal" => Ok(ServerKind::Normal),
+            "minecraft" => Ok(ServerKind::Minecraft),
+            "factorio" => Ok(ServerKind::Factorio),
+            _ => Err(ParseServerKindErr(())),
+        }
     }
 }
