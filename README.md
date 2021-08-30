@@ -58,6 +58,9 @@ token = "<discord bot token>"
 # the role will be executed.
 prefix = "<command prefix>"
 
+# the control command prefix.
+#command = "<command prefix>"
+
 # The id of role the users this bot can be used.
 # if not specified, all users can use this bot. it's dangerous
 #role = <role id>

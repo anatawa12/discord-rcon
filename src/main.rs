@@ -9,6 +9,7 @@ use std::str::FromStr;
 
 struct Handler {
     prefix: String,
+    command: Option<String>,
     connection: Mutex<Connection>,
     role: Option<RoleId>,
     channel: Option<ChannelId>,
@@ -38,7 +39,30 @@ impl EventHandler for Handler {
         if !permission { 
             return
         };
-        if let Some(command) = message.content.strip_prefix(&self.prefix) {
+        if let Some(command) = self.command.as_ref().and_then(|pat| message.content.strip_prefix(pat)) {
+            match command.split_once(char::is_whitespace).map(|x| x.0) {
+                Some("stop") => {
+                    print_err(
+                        message
+                            .channel_id
+                            .say(&ctx.http, "stopping ...")
+                            .await,
+                    );
+                    panic!("manually stop")
+                }
+                _ => {
+                    print_err(
+                        message
+                            .channel_id
+                            .say(
+                                &ctx.http,
+                                format!("unknown command: {}", command),
+                            )
+                            .await,
+                    );
+                }
+            }
+        } else if let Some(command) = message.content.strip_prefix(&self.prefix) {
             let command = command.trim();
             println!("run command: {}", command);
 
@@ -99,6 +123,7 @@ async fn main() {
 
     let handler = Handler {
         prefix: options.prefix,
+        command: options.command,
         role: options.role.map(RoleId),
         channel: options.channel.map(ChannelId),
         connection: Mutex::new(connection),
@@ -132,6 +157,7 @@ fn read_options_from_env() -> Option<Options> {
     Some(Options {
         token: env::var("DISCORD_TOKEN").ok()?,
         prefix: env::var("DISCORD_PREFIX").ok()?,
+        command: env::var("DISCORD_COMMAND").ok(),
         role: env::var("DISCORD_ROLE").ok()
             .map(|x| x.parse::<u64>().expect("parsing DISCORD_ROLE")),
         channel: env::var("DISCORD_CHANNEL").ok()
@@ -150,6 +176,7 @@ fn read_options_from_env() -> Option<Options> {
 struct Options {
     token: String,
     prefix: String,
+    command: Option<String>,
     role: Option<u64>,
     channel: Option<u64>,
     #[serde(default)]
