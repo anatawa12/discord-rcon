@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          token: "${{ secrets.ACTIONS_PAT }}"
       - uses: anatawa12/something-releaser@v2
       - uses: actions-rs/toolchain@v1
         with:
