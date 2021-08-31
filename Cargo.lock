@@ -313,7 +313,7 @@ dependencies = [
 
 [[package]]
 name = "discord-rcon"
-version = "0.1.3"
+version = "0.1.4-SNAPSHOT"
 dependencies = [
  "rcon",
  "serde",
