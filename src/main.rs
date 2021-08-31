@@ -53,7 +53,8 @@ impl EventHandler for Handler {
             .and_then(|pat| message.content.strip_prefix(pat))
         {
             let command = command.trim();
-            match command.split_once(char::is_whitespace).map(|x| x.0) {
+            let mut iterator = command.split_whitespace();
+            match iterator.next() {
                 Some("reconnect") => {
                     print_err(message.channel_id.say(&ctx.http, "reconnecting ...").await);
                     match self.connector.connect().await {
