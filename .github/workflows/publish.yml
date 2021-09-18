@@ -152,6 +152,7 @@ jobs:
           git push && git push --tags
           # create master and push
           git switch -c master
+          git fetch origin master --depth=0
           git push -u origin master
 
       - name: Update To Next Version
