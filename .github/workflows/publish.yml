@@ -132,7 +132,7 @@ jobs:
             linux/s390x
           tags: |-
             ghcr.io/anatawa12/discord-rcon:latest
-            ghcr.io/anatawa12/discord-rcon:${{ needs.setup.version }}
+            ghcr.io/anatawa12/discord-rcon:${{ needs.setup.outputs.version }}
 
       - name: Publish CARGO
         env:
@@ -141,7 +141,7 @@ jobs:
 
       - name: Push tag
         env:
-          VERSION: ${{ needs.setup.version }}
+          VERSION: ${{ needs.setup.outputs.version }}
         run: |-
           # set tag and publish current version
           git tag $VERSION
