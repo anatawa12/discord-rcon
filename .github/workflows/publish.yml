@@ -30,7 +30,7 @@ jobs:
             exit 1
           fi
           VERSION="$(version-unsnapshot "$VERSION")"
-          echo "::set-output name=version::$VERSION" > $GITHUB_ENV
+          echo "::set-output name=version::$VERSION"
           set-version "$VERSION"
           cargo metadata --format-version=1 > /dev/null
           generate-changelog -v "$VERSION" --date-for-unreleased
