@@ -54,10 +54,11 @@ jobs:
             triple: armv7-unknown-linux-gnueabihf
           - target: arm64
             triple: aarch64-unknown-linux-gnu
-          - target: ppc64le
-            triple: powerpc64le-unknown-linux-gnu
-          - target: s390x
-            triple: s390x-unknown-linux-gnu
+          # ring does not support
+          # - target: ppc64le
+          #   triple: powerpc64le-unknown-linux-gnu
+          # - target: s390x
+          #   triple: s390x-unknown-linux-gnu
     needs: [setup]
     steps:
       - uses: actions/checkout@v2
