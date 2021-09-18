@@ -156,21 +156,30 @@ async fn main() {
 }
 
 async fn read_options() -> Options {
-    if let Some(options) = read_options_from_env() {
-        return options;
+    let expect_env = match read_options_from_env() {
+        Ok(options) => return options,
+        Err(expect_env) => expect_env,
+    };
+    let err_msg = match read_options_from_file().await {
+        Ok(options) => return options,
+        Err(err_msg) => err_msg,
+    };
+    let mut args = std::env::args();
+    args.next(); // skip exec name
+    let prefer_env = args.next().map(|x| &x == "--env").unwrap_or(false);
+    if prefer_env {
+        panic!("required envionemnt variable {} not found", expect_env);
+    } else {
+        panic!("{}", err_msg);
     }
-    let config = tokio::fs::read_to_string("config.toml")
-        .await
-        .expect("failed to read config.toml");
-    toml::from_str(&config).expect("failed to read config.toml")
 }
 
-fn read_options_from_env() -> Option<Options> {
+fn read_options_from_env() -> Result<Options, &'static str> {
     use std::env;
 
-    Some(Options {
-        token: env::var("DISCORD_TOKEN").ok()?,
-        prefix: env::var("DISCORD_PREFIX").ok()?,
+    Ok(Options {
+        token: env::var("DISCORD_TOKEN").map_err(|_| "DISCORD_TOKEN")?,
+        prefix: env::var("DISCORD_PREFIX").map_err(|_| "DISCORD_PREFIX")?,
         command: env::var("DISCORD_COMMAND").ok(),
         role: env::var("DISCORD_ROLE")
             .ok()
@@ -183,12 +192,19 @@ fn read_options_from_env() -> Option<Options> {
             .map(|x| x.parse::<ServerKind>().expect("parsing SERVER_KIND"))
             .unwrap_or_else(Default::default),
         rcon: RconOptions {
-            address: env::var("RCON_ADDRESS").ok()?,
+            address: env::var("RCON_ADDRESS").map_err(|_| "RCON_ADDRESS")?,
             pass: env::var("RCON_PASSWORD")
                 .ok()
                 .unwrap_or_else(Default::default),
         },
     })
+}
+
+async fn read_options_from_file() -> Result<Options, &'static str> {
+    let config = tokio::fs::read_to_string("config.toml")
+        .await
+        .map_err(|_| "failed to read config.toml")?;
+    Ok(toml::from_str(&config).expect("failed to read config.toml"))
 }
 
 #[derive(Deserialize)]

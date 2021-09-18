@@ -19,4 +19,4 @@ ADD --chmod=555 "https://files.anatawa12.com/tini-download/?arch=${TARGETARCH}&v
 
 USER nonroot
 
-CMD ["/tini", "/discord-rcon"]
+CMD ["/tini", "--", "/discord-rcon", "--env"]
