@@ -59,7 +59,7 @@ impl EventHandler for Handler {
                     print_err(message.channel_id.say(&ctx.http, "reconnecting ...").await);
                     match self.connector.connect().await {
                         Ok(connection) => {
-                            std::mem::replace(self.connection.lock().await.deref_mut(), connection);
+                            *self.connection.lock().await.deref_mut() = connection;
                             print_err(message.channel_id.say(&ctx.http, "reconnected").await);
                         }
                         Err(err) => {
