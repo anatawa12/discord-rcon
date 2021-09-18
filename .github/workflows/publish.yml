@@ -76,6 +76,7 @@ jobs:
       - name: Build
         uses: actions-rs/cargo@v1
         with:
+          cross: true
           command: build
           args: --target ${{ matrix.triple }} --release
 
