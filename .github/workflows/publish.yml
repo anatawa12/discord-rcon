@@ -95,7 +95,7 @@ jobs:
       - run: |
           echo "$NEEDS"
           exit 1;
-        with:
+        env:
           NEEDS: ${{ toJson(needs) }}
       - uses: actions/checkout@v2
         with:
