@@ -159,3 +159,4 @@ jobs:
           git add .
           git commit -m "prepare for next version: $VERSION"
           git push
+          git push --delete origin releasing
