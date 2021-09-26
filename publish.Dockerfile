@@ -6,7 +6,7 @@ ARG TARGETARCH
 ARG TARGETVARIANT
 
 COPY "./outputs/built-${TARGETARCH}/discord-rcon" /discord-rcon
-ADD --chmod=555 "https://files.anatawa12.com/tini-download/?arch=${TARGETARCH}&variant=${TARGETVARIANT}" /tini
+ADD --chmod=555 "https://api.anatawa12.com/short/tini-download?arch=${TARGETARCH}&variant=${TARGETVARIANT}" /tini
 
 USER nonroot
 
